@@ -15,7 +15,7 @@ export default function Home() {
             wawancara interaktif, da dapatkan feedback untuk mengasah kemampuan
             IT kamu!
           </p>
-          <a className="bg-primary-red text-white px-6 py-3 rounded-xl font-semibold w-24 text-center">
+          <a href="/register"className="bg-primary-red text-white px-6 py-3 rounded-xl font-semibold w-24 text-center">
             Mulai
           </a>
         </div>

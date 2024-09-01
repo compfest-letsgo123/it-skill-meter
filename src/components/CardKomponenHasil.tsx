@@ -1,8 +1,10 @@
 // components/EvaluationCard.tsx
 import Image from "next/image";
+import { CircularProgress } from "@nextui-org/progress";
+
 
 // Function to fetch the icon based on title_id
-const getIconById = (id) => {
+const getIconById = (id: number) => {
   const komponen = [
     {
       id: 1,
@@ -24,38 +26,35 @@ const getIconById = (id) => {
   return komponenItem ? komponenItem.icon : null;
 };
 
-export default function CardKomponenHasil({ item }) {
+export default function CardKomponenHasil({ item }: { item: any }) {
   return (
-    <div className="bg-white p-4 h-64 shadow-lg rounded-xl relative flex flex-col space-y-4">
+    <div className="bg-white px-6 py-4 h-80 shadow-lg rounded-2xl relative flex flex-col space-y-4">
       {/* Title card */}
       <div className="flex justify-between items-center">
         <div className="flex flex-row">
           <div className="w-12 h-12 bg-gray-100 rounded-full p-2 mr-4">
             <Image
-              src={getIconById(item.title_id)}
+              src={getIconById(item.title_id) || ""}
               alt={item.title}
               width={40}
               height={40}
               className="object-contain"
             />
           </div>
-          <h2 className="text-xl font-semibold text-black flex items-center">{item.title}</h2>
+          <h2 className="text-xl font-bold text-black flex items-center">{item.title}</h2>
         </div>
 
-        <div className="flex items-center justify-center">
-          <div className="relative w-8 h-8 text-center">
-            <div
-              className="absolute inset-0 rounded-full bg-red-100 flex items-center justify-center"
-              style={{
-                backgroundImage: `conic-gradient(red ${item.score}%, #f3f4f6 ${item.score}%)`,
-              }}
-            >
-              <span className="text-xl font-bold text-red-600">
-                {item.score}%
-              </span>
-            </div>
-          </div>
-        </div>
+        <CircularProgress
+          classNames={{
+            svg: "w-16 h-16",
+            indicator: "stroke-primary-red",
+            track: "stroke-secondary-red/10",
+            value: "text-sm font-semibold text-primary-red",
+          }}
+          value={78}
+          strokeWidth={4}
+          showValueLabel={true}
+        />
       </div>
 
       {/* Description */}
