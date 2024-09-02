@@ -1,6 +1,41 @@
+"use client";
+
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { supabase } from '@/config/supabaseClient'; // Adjust the path according to your project structure
 import Navbar from "@/components/Navbar";
 
 export default function Home() {
+  const [user, setUser] = useState<any>(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setUser(session?.user || null);
+    };
+
+    fetchUser();
+
+    // Subscribe to auth state changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_, session) => {
+      setUser(session?.user || null);
+    });
+
+    // Cleanup subscription on unmount
+    return () => {
+      subscription?.unsubscribe();
+    };
+  }, []);
+
+  const handleClick = () => {
+    if (user) {
+      router.push('/interview');
+    } else {
+      router.push('/register');
+    }
+  };
+
   return (
     <>
       <Navbar />
@@ -15,9 +50,12 @@ export default function Home() {
             wawancara interaktif, da dapatkan feedback untuk mengasah kemampuan
             IT kamu!
           </p>
-          <a href="/register"className="bg-primary-red text-white px-6 py-3 rounded-xl font-semibold w-24 text-center">
+          <button
+            onClick={handleClick}
+            className="bg-primary-red text-white px-6 py-3 rounded-xl font-semibold w-24 text-center"
+          >
             Mulai
-          </a>
+          </button>
         </div>
         <div className="w-full md:w-1/2 flex justify-center items-center">
           <img src="/home-icon.svg" alt="Icon" className="w-64 md:w-96" />

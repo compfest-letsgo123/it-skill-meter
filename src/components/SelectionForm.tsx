@@ -38,7 +38,7 @@ const SelectionForm = ({
           className="block w-full p-2 text-black border border-gray-300 rounded-lg"
         >
           <option>Bahasa Inggris</option>
-          <option>Bahasa Indonesia</option>
+          <option disabled>Bahasa Indonesia (COMING SOON)</option>
         </select>
       </div>
 
