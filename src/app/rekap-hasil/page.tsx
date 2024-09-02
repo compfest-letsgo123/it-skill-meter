@@ -1,11 +1,48 @@
-"use client"
-import { useState } from "react";
+"use client";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import CardRekapHasil from "@/components/CardRekapHasil";
 import Navbar from "@/components/Navbar";
 import { hasilData } from "@/data/hasilData";
+import { supabase } from "@/config/supabaseClient"; // Adjust the path according to your project structure
 
 export default function Home() {
   const [filter, setFilter] = useState("All"); // State for filtering
+  const [user, setUser] = useState<any>(null);
+  const [showModal, setShowModal] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setUser(session?.user || null);
+
+      // Show modal if user is not logged in
+      if (!session?.user) {
+        setShowModal(true);
+      }
+    };
+
+    fetchUser();
+
+    // Subscribe to auth state changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_, session) => {
+      setUser(session?.user || null);
+
+      if (!session?.user) {
+        setShowModal(true);
+      }
+    });
+
+    // Cleanup subscription on unmount
+    return () => {
+      subscription?.unsubscribe();
+    };
+  }, []);
+
+  const handleRedirectToLogin = () => {
+    router.push('/login');
+  };
 
   // Filter data based on filter state
   const filteredData =
@@ -59,6 +96,22 @@ export default function Home() {
           />
         ))}
       </section>
+
+      {/* Modal for non-logged-in users */}
+      {showModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50 text-black">
+          <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full text-center">
+            <h2 className="text-xl font-semibold mb-4">Access Restricted</h2>
+            <p className="mb-4">Please log in to access this page.</p>
+            <button
+              onClick={handleRedirectToLogin}
+              className="bg-primary-red text-white px-6 py-3 rounded-lg font-semibold"
+            >
+              Go to Login
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

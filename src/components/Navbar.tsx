@@ -33,7 +33,7 @@ useEffect(() => {
 const handleLogout = async () => {
   await supabase.auth.signOut();
   setUser(null);
-  router.push('/login'); // Redirect to login or home page after logout
+  router.push('/'); // Redirect to login or home page after logout
 };
 
 const linkClass = "font-medium text-black text-center py-2 hover:underline";

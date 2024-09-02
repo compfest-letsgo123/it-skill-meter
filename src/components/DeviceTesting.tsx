@@ -11,7 +11,7 @@ export default function InterviewPrep({
 }) {
   const [isMicTesting, setIsMicTesting] = useState(false);
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
-  const videoRef = useRef(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const audioRef = useRef(null);
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);

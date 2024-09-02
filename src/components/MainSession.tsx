@@ -6,7 +6,7 @@ export default function InterviewSession({onContinue} : {onContinue: () => void;
   const initialTime = 120; // 2 minutes in seconds
   const [time, setTime] = useState(initialTime);
   const [liveText, setLiveText] = useState("");
-  const videoRef = useRef(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
   const router = useRouter();
 
   const handleBack = () => {
