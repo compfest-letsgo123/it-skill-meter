@@ -3,13 +3,14 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import CardRekapHasil from "@/components/CardRekapHasil";
 import Navbar from "@/components/Navbar";
-import { hasilData } from "@/data/hasilData";
+// import { hasilData } from "@/data/hasilData";
 import { supabase } from "@/config/supabaseClient"; // Adjust the path according to your project structure
 
 export default function Home() {
   const [filter, setFilter] = useState("All"); // State for filtering
   const [user, setUser] = useState<any>(null);
   const [showModal, setShowModal] = useState(false);
+  const [hasilData, setHasilData] = useState<any[]>([]);
   const router = useRouter();
 
   useEffect(() => {
@@ -40,6 +41,34 @@ export default function Home() {
     };
   }, []);
 
+  useEffect(() => {
+    const fetchHasilData = async () => {
+      const { data, error } = await supabase
+        .from('hasil')
+        .select(`
+          id,
+          created_at,
+          id_roles_and_skills,
+          level,
+          overview,
+          id_user,
+          roles_and_skills (type, nama)  // Join with roles_and_skills table
+        `)
+        .eq('id_user', user?.id); // Assuming you want data for the logged-in user
+
+      if (error) {
+        console.error("Error fetching data:", error);
+      } else {
+        setHasilData(data);
+        console.log(data);
+      }
+    };
+
+    if (user) {
+      fetchHasilData();
+    }
+  }, [user]);
+
   const handleRedirectToLogin = () => {
     router.push('/login');
   };
@@ -48,7 +77,7 @@ export default function Home() {
   const filteredData =
     filter === "All"
       ? hasilData
-      : hasilData.filter(card => card.type === filter);
+      : hasilData.filter(card => card.roles_and_skills.type === filter);
 
   return (
     <div className="min-h-screen">
@@ -65,7 +94,7 @@ export default function Home() {
             All
           </button>
           <button
-            onClick={() => setFilter("Role-based")}
+            onClick={() => setFilter("role")}
             className={`${
               filter === "Role-based" ? "text-black border-b-2 border-black" : "text-gray-500 hover:text-black"
             }`}
@@ -73,7 +102,7 @@ export default function Home() {
             Role-based
           </button>
           <button
-            onClick={() => setFilter("Skill-based")}
+            onClick={() => setFilter("skill")}
             className={`${
               filter === "Skill-based" ? "text-black border-b-2 border-black" : "text-gray-500 hover:text-black"
             }`}
@@ -88,9 +117,9 @@ export default function Home() {
           <CardRekapHasil
             key={index}
             id={card.id} // Pass id to the Card component
-            title={card.title}
-            type={card.type}
-            date={card.date}
+            title={card.roles_and_skills.nama}
+            type={card.roles_and_skills.type}
+            date={card.created_at}
             level={card.level}
             overview={card.overview}
           />

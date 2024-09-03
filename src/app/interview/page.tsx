@@ -1,18 +1,52 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/config/supabaseClient"; // Adjust the path according to your project structure
-import { roles, skills } from "@/data/rolesAndSkills";
+import { supabase } from "@/config/supabaseClient";
 import Navbar from "@/components/Navbar";
 
 export default function Home() {
   const [warning, setWarning] = useState<string | null>(null);
+  const [roles, setRoles] = useState<any[]>([]);
+  const [skills, setSkills] = useState<any[]>([]);
   const router = useRouter();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const { data, error } = await supabase
+        .from("roles_and_skills")
+        .select("*");
+
+      if (error) {
+        console.error("Error fetching data:", error);
+      } else {
+
+        // Initialize arrays to hold categorized data
+        const rolesArray: any[] = [];
+        const skillsArray: any[] = [];
+
+        // Categorize data based on 'tipe'
+        data?.forEach((item) => {
+          if (item.type === "role") {
+            rolesArray.push(item);
+          } else if (item.type === "skill") {
+            skillsArray.push(item);
+          }
+        });
+
+        setRoles(rolesArray);
+        setSkills(skillsArray);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   // Function to handle redirection on button click
   const handleRedirect = async (id: number) => {
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
 
     if (session?.user) {
       router.push(`/interview/${id}`);
@@ -25,7 +59,7 @@ export default function Home() {
   };
 
   return (
-    <div className="pb-8">
+    <div className="pb-8 min-h-screen">
       <Navbar />
       <h1 className="flex justify-center text-4xl font-bold mb-8 pt-32 text-black">
         Pilih Karir IT Ambisimu!
@@ -40,7 +74,9 @@ export default function Home() {
 
       {/* Role-based Section */}
       <div className="px-8 lg:px-16">
-        <h2 className="text-2xl font-bold text-black underline mb-4">Role-based</h2>
+        <h2 className="text-2xl font-bold text-black underline mb-4">
+          Role-based
+        </h2>
         <div className="grid grid-cols-4 gap-4">
           {roles.map((role) => (
             <button
@@ -53,7 +89,9 @@ export default function Home() {
           ))}
         </div>
         {/* Skill-based Section */}
-        <h2 className="text-2xl font-bold text-black underline mb-4 pt-8">Skill-based</h2>
+        <h2 className="text-2xl font-bold text-black underline mb-4 pt-8">
+          Skill-based
+        </h2>
         <div className="grid grid-cols-4 gap-4">
           {skills.map((skill) => (
             <button

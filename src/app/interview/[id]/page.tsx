@@ -1,8 +1,9 @@
 "use client"
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { roles, skills } from "@/data/rolesAndSkills";
+import { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
+import { supabase } from "@/config/supabaseClient";
 
 export default function InterviewDetail({
   params,
@@ -11,18 +12,43 @@ export default function InterviewDetail({
 }) {
   const { id } = params;
   const router = useRouter();
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState<boolean>(true); // New state for loading
 
   const handleRedirect = () => {
     router.push(`/interview/ongoing`);
   };
 
-  // Menggabungkan roles dan skills ke dalam satu array
-  const combinedData = [...roles, ...skills];
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true); // Set loading to true when starting data fetch
+      const { data: rolesAndSkills, error } = await supabase
+        .from("roles_and_skills")
+        .select("*")
+        .eq("id", parseInt(id as string));
 
-  // Mencari data berdasarkan id
-  const data = combinedData.find((item) => item.id === parseInt(id as string));
+      if (error) {
+        console.error("Error fetching data:", error);
+      } else {
+        // console.log("Fetched data:", rolesAndSkills); // Log the fetched data
+        setData(rolesAndSkills[0]); // Assuming you want the first matching item
+      }
+      setLoading(false); // Set loading to false once data is fetched
+    };
 
-  // Jika data tidak ditemukan
+    fetchData();
+  }, [id]);
+
+  // Show a loading indicator while data is being fetched
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="loader"></div> {/* Add a loading spinner or animation here */}
+      </div>
+    );
+  }
+
+  // If data is not found
   if (!data) {
     return (
       <div>
@@ -50,7 +76,7 @@ export default function InterviewDetail({
   ];
 
   return (
-    <div className="pt-32 md:h-screen">
+    <div className="pt-32 min-h-screen md:h-screen">
       <Navbar />
       <div className="flex flex-col px-12 md:flex-row">
         <div className="flex flex-col w-full md:w-1/2 mb-8 gap-x-4">

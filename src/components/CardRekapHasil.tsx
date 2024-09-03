@@ -10,6 +10,16 @@ interface CardRekapHasilProps {
   overview: string;
 }
 
+const formatDate = (dateString: string) => {
+  const options: Intl.DateTimeFormatOptions = {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  };
+  return new Date(dateString).toLocaleDateString('en-GB', options);
+
+};
+
 const CardRekapHasil = ({ id, title, type, date, level, overview }: CardRekapHasilProps) => {
   const router = useRouter(); // Use router for navigation
 
@@ -21,8 +31,11 @@ const CardRekapHasil = ({ id, title, type, date, level, overview }: CardRekapHas
     <div className="bg-white shadow-md rounded-lg p-5 max-w-xl h-72 flex flex-col justify-between items-start">
       <div>
         <div className="flex flex-row justify-between">
-          <p className="text-gray-400 text-sm">{type}</p>
-          <p className="text-sm text-gray-400">{date}</p>
+          <p className="text-gray-400 text-sm">
+            {type === 'role' ? 'Role-based' : type === 'skill' ? 'Skill-based' : 'Unknown'}
+          </p>
+
+          <p className="text-sm text-gray-400">{formatDate(date)}</p>
         </div>
 
         <h2 className="text-xl font-semibold text-black mb-2">{title}</h2>

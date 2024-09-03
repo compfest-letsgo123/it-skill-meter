@@ -17,7 +17,7 @@ export default function InterviewPage() {
     setStep(2);
   };
 
-  const handleContinueFromSelection = (selection) => {
+  const handleContinueFromSelection = (selection: { language: string, duration: string }) => {
     setUserSelection(selection);
     setStep(3);
   };
