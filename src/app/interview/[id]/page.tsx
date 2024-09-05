@@ -116,6 +116,6 @@ export default function InterviewDetail({
           ))}
         </div>
       </div>
-    </div>
+  </div>
   );
 }

@@ -2,25 +2,35 @@ import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
-export default function InterviewSession({onContinue} : {onContinue: () => void;}) {
-  const initialTime = 120; // 2 minutes in seconds
-  const [time, setTime] = useState(initialTime);
+export default function MainSession({ onContinue }: { onContinue: (text: string) => void; }) {
   const [liveText, setLiveText] = useState("");
+  const [isRecording, setIsRecording] = useState(false);
   const videoRef = useRef<HTMLVideoElement | null>(null);
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
   const router = useRouter();
 
   const handleBack = () => {
     router.back();
   };
 
-  useEffect(() => {
-    // Timer logic
-    const timer = setInterval(() => {
-      setTime((prevTime) => (prevTime > 0 ? prevTime - 1 : 0));
-    }, 1000);
+  const handleStartRecording = () => {
+    if (recognitionRef.current && !isRecording) {
+      recognitionRef.current.start();
+      setIsRecording(true);
+    }
+  };
 
-    return () => clearInterval(timer);
-  }, []);
+  const handleStopRecording = () => {
+    if (recognitionRef.current && isRecording) {
+      recognitionRef.current.stop();
+      setIsRecording(false);
+      // onFinish(liveText); // Pass liveText to parent when recording stops
+    }
+  };
+
+  const handleSubmit = () => {
+    onContinue(liveText);
+  }
 
   useEffect(() => {
     // Initialize webcam
@@ -34,27 +44,50 @@ export default function InterviewSession({onContinue} : {onContinue: () => void;
         })
         .catch((err) => console.error("Error accessing the webcam", err));
     }
+
+    // Initialize SpeechRecognition
+    const SpeechRecognition = window.SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      const recognition = new SpeechRecognition();
+      recognition.lang = 'id-ID'; // Set language to Indonesian
+      recognition.interimResults = true; // Enable interim results
+      recognition.continuous = true; // Keep listening
+
+      let interimTranscript = '';
+
+      recognition.onresult = (event) => {
+        let finalTranscript = '';
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          if (event.results[i].isFinal) {
+            finalTranscript += event.results[i][0].transcript;
+          } else {
+            interimTranscript = event.results[i][0].transcript;
+          }
+        }
+        setLiveText((prevText) => prevText + finalTranscript);
+      };
+
+      recognition.onerror = (event) => {
+        console.error("SpeechRecognition error", event.error);
+      };
+
+      recognitionRef.current = recognition;
+    } else {
+      console.error("SpeechRecognition is not supported in this browser.");
+    }
+
+    return () => {
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
+    };
   }, []);
 
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, "0")}:${secs
-      .toString()
-      .padStart(2, "0")}`;
-  };
-
-  const calculateProgress = () => {
-    return (time / initialTime) * 100;
-  };
-
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 w-4xl mx-auto">
-
-      {/* Timer, Back Button and Question Header */}
+    <div className="bg-white rounded-lg shadow-md p-6 max-w-4xl mx-auto">
+      {/* Back Button and Question Header */}
       <div className="flex justify-between items-center mb-4 text-black">
         <div>Pertanyaan 1</div>
-        <div className="text-2xl font-bold">{formatTime(time)}</div>
         <button
           onClick={handleBack}
           className="border border-gray-400 text-gray-600 px-2 py-1 rounded hover:bg-gray-200"
@@ -63,13 +96,7 @@ export default function InterviewSession({onContinue} : {onContinue: () => void;
         </button>
       </div>
 
-      {/* Progress Bar */}
-      <div className="w-full h-2 bg-gray-200 rounded-full overflow-hidden mb-4">
-        <div
-          className="bg-primary-red h-full transition-all duration-1000 ease-out"
-          style={{ width: `${calculateProgress()}%` }}
-        ></div>
-      </div>
+      <div className="border-t-2 border-gray-400 mt-2 px-2 pb-4"></div>
 
       {/* Interviewer and User Headers */}
       <div className="flex flex-row gap-x-16 justify-between">
@@ -108,8 +135,13 @@ export default function InterviewSession({onContinue} : {onContinue: () => void;
             autoPlay
             className="w-full h-48 bg-gray-200 mb-2 rounded-xl"
           />
-          <div className="bg-red-100 h-8">
-            {/* User audio waveform would go here */}
+          <div className="flex justify-center">
+            <button 
+              onClick={isRecording ? handleStopRecording : handleStartRecording}
+              className="bg-primary-red rounded-md h-8 px-4 flex justify-center items-center text-sm hover:secondary-red"
+            >
+              {isRecording ? 'Stop Rekam Jawaban' : 'Mulai Rekam Jawaban'}
+            </button>
           </div>
         </div>
       </div>
@@ -124,7 +156,7 @@ export default function InterviewSession({onContinue} : {onContinue: () => void;
 
       {/* Next Button */}
       <div className="flex justify-end">
-        <button onClick={onContinue} className="px-6 py-2 bg-red-500 text-white rounded">
+        <button onClick={handleSubmit} className="px-6 py-2 bg-red-500 text-white rounded">
           Lanjut
         </button>
       </div>

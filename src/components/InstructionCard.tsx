@@ -13,18 +13,18 @@ const InstructionCard = ({ onContinue }: { onContinue: () => void }) => {
     <div className="bg-white shadow-md rounded-lg p-6 max-w-xl mx-auto">
       <h2 className="text-xl font-semibold text-black mb-4">Instruksi</h2>
       <ol className="list-decimal list-inside space-y-2 text-gray-700 text-md">
-        <li>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer auctor sed quam ut mattis.</li>
+        <li>Baca instruksi berikut, jika sudah klik lanjut!</li>
         <li>
-          Aliquam placerat commodo odio, vel efficitur nisl semper eu. Cras tempus libero at sem mollis, in
-          ullamcorper ex congue. Sed finibus auctor laoreet. Integer id neque eget ligula lacinia ultricies.
+          Pilih bahasa simulasi interview yang tersedia serta jumlah pertanyaan simulasi interview yang diinginkan.
         </li>
         <li>
-          Sed est felis, scelerisque et urna non, vehicula convallis libero. Donec feugiat, quam eu finibus
-          ultrices, nisl turpis tempus metus, in porta leo nisl quis ante. Nullam justo sapien, rhoncus sit
-          amet euismod vel, rutrum id arcu.
+          Cek mikrofon dan kamera supaya simulasi interview dapat berjalan dengan lancar. Jika diyakini sudah berfungsi dengan baik, simulasi interview dapat dimulai.
         </li>
-        <li>Maecenas lobortis pulvinar metus quis congue.</li>
+        <li>Setiap pertanyaan akan dibacakan oleh sistem dan dapat diulang oleh user.</li>
+        <li>Klik start recording untuk memulai jawaban. Jika sudah selesai, dapat klik stop recording.</li>
+        <li>Setelah seluruh pertanyaan selesai ditanyakan, AI akan memproses simulasi interview Anda dan tunggu hasilnya! </li>
       </ol>
+      <p className="text-black"><br />Selamat mengerjakan :D</p>
       <Garis />
       <div className="flex justify-between items-center mt-6">
         <button onClick={handleBack} className="border border-gray-400 text-gray-600 px-4 py-2 rounded hover:bg-gray-200">

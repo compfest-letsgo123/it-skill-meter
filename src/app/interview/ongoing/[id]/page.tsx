@@ -1,7 +1,6 @@
 "use client"
-// pages/interview.js
-
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import InstructionCard from "@/components/InstructionCard";
 import SelectionForm from "@/components/SelectionForm";
 import DeviceTesting from "@/components/DeviceTesting";
@@ -10,14 +9,19 @@ import LoadingScreen from "@/components/LoadingScreen";
 
 export default function InterviewPage() {
   const [step, setStep] = useState(1);
-  const [userSelection, setUserSelection] = useState({ language: "", duration: "" });
+  const [userSelection, setUserSelection] = useState({ language: "", numQuestions: "" });
   const [isLoading, setIsLoading] = useState(false);
+  const [mainSessionCount, setMainSessionCount] = useState(1);
+  const [liveText, setLiveText] = useState("");
+  const [daftarPertanyaanJawaban, setDaftarPertanyaanJawaban] = useState({});
+  // const []
+  const router = useRouter();
 
   const handleContinueFromInstructions = () => {
     setStep(2);
   };
 
-  const handleContinueFromSelection = (selection: { language: string, duration: string }) => {
+  const handleContinueFromSelection = (selection: { language: string, numQuestions: string }) => {
     setUserSelection(selection);
     setStep(3);
   };
@@ -34,14 +38,23 @@ export default function InterviewPage() {
     setStep(4);
   };
 
-  const handleFinishInterview = () => {
+  const handleFinishInterview = (text: string) => {
     setIsLoading(true);
-    // Simulate API call or processing time
+    setLiveText(text); // Set the live text when the interview is finished
+
+    // CALL API DI SINI
     setTimeout(() => {
       setIsLoading(false);
-      // Navigate to results page or next step
-      console.log("Interview finished, process results");
+      console.log("Interview finished, process results", text); // Log live text
     }, 3000);
+
+    setMainSessionCount(mainSessionCount + 1);
+    console.log(mainSessionCount);
+    setLiveText(text)
+    const numQuestions = parseInt(userSelection.numQuestions) || 0;
+    if (mainSessionCount === numQuestions) {
+      router.push(`/rekap-hasil/3`);
+    }
   };
 
   return (

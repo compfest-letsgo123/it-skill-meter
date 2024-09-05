@@ -11,11 +11,11 @@ const SelectionForm = ({
   onBack: any;
 }) => {
   const [language, setLanguage] = useState("Bahasa Inggris");
-  const [duration, setDuration] = useState("Singkat - 5 menit");
+  const [numQuestions, setNumQuestions] = useState("3");
 
   const handleSubmit = () => {
     // Call the onContinue function to pass the selected values
-    onContinue({ language, duration });
+    onContinue({ language, numQuestions });
   };
 
   return (
@@ -47,17 +47,22 @@ const SelectionForm = ({
           htmlFor="duration"
           className="block text-sm font-medium text-gray-700 mb-2"
         >
-          Durasi
+          Jumlah pertanyaan simulasi
         </label>
         <select
           id="duration"
-          value={duration}
-          onChange={(e) => setDuration(e.target.value)}
+          value={numQuestions}
+          onChange={(e) => setNumQuestions(e.target.value)}
           className="block w-full p-2 border text-black border-gray-300 rounded-lg"
         >
-          <option>Singkat - 5 menit</option>
-          <option>Sedang - 10 menit</option>
-          <option>Panjang - 15 menit</option>
+          <option value="3">3 Pertanyaan</option>
+          <option value="4">4 Pertanyaan</option>
+          <option value="5">5 Pertanyaan</option>
+          <option value="6">6 Pertanyaan</option>
+          <option value="7">7 Pertanyaan</option>
+          <option value="8">8 Pertanyaan</option>
+          <option value="9">9 Pertanyaan</option>
+          <option value="10">10 Pertanyaan</option>
         </select>
       </div>
 
