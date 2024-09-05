@@ -16,7 +16,7 @@ export default function InterviewDetail({
   const [loading, setLoading] = useState<boolean>(true); // New state for loading
 
   const handleRedirect = () => {
-    router.push(`/interview/ongoing`);
+    router.push(`/interview/ongoing/${id}`);
   };
 
   useEffect(() => {
