@@ -208,7 +208,7 @@ export default function MainSession({
       {/* Live Text Display with Edit and Save Buttons */}
       <div className="mb-4">
         <div className="flex justify-between mb-2">
-          <h3>Live Text</h3>
+          <h3 className='text-black'>Live Text</h3>
           <button
             onClick={isEditable ? handleSaveChanges : handleToggleEditable}
             className="text-gray-600 hover:text-gray-800"
