@@ -1,4 +1,6 @@
 # Frontend Website IT Skill Meter
+![image](https://github.com/user-attachments/assets/37ba0309-e3d7-4103-9a50-11841e650996)
+
 ## Compfest - Letsgo123
 1. Hilmi Baskara Radanto
 2. Syafiq Ziyadul Arifin
