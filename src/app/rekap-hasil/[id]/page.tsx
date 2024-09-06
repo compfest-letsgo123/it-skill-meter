@@ -23,7 +23,8 @@ export default function RekapHasilPage({ params }: { params: any }) {
             overview,
             level,
             created_at,
-            evaluation
+            evaluation,
+            feedback
           `)
           .eq("id", parseInt(id, 10))
           .single(); // Expecting a single record

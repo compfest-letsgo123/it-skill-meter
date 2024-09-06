@@ -9,7 +9,7 @@ export default function Roadmap({ nama }: RoadmapProps) {
     <>
       <div className="w-full space-y-8">
         {/* Roadmap Section */}
-        <div className="bg-white p-6 rounded-xl shadow-md max-h-[90vh] overflow-auto">
+        <div className="bg-white p-6 rounded-xl shadow-md max-h-[90vh] overflow-auto ">
           <h3 className="text-xl font-bold mb-4 text-black">Roadmap 🗺️</h3>
           <div className="flex justify-center">
             <div className="w-full">

@@ -36,7 +36,7 @@ const Login = () => {
         className="flex items-center mb-6 text-2xl font-semibold text-black"
       >
         <div className="w-8 h-8 rounded-full bg-gradient-to-r from-primary-red to-primary-blue mr-2"></div>
-        <span className="font-semibold text-lg text-black">SkillMeterMu</span>
+        <span className="font-semibold text-lg text-black">IT Skill Meter</span>
       </a>
       <div className="w-full bg-white rounded-lg shadow border md:mt-0 sm:max-w-md xl:p-0">
         <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
