@@ -101,48 +101,63 @@ export default function InterviewPage({ params }: { params: { id: string } }) {
     setStep(4);
 
     // CALL API PERTAMA
-    const requestBody = await handleQueryRAG(
+    const response = await handleQueryRAG(
       `You are currently interviewing the user, and the interview will consist of ${userSelection.numQuestions} questions. Can you start the interview? You may begin by asking any question related to the role the user has applied for. Return a query with only one key: 'question', and set the value using ${userSelection.language}`
     );
 
     // RESPONSE PERTANYAAN
-    setCurrentPertanyaan(requestBody.data.question);
+    setCurrentPertanyaan(response.data.question);
+    // setCurrentPertanyaan("Apa yang kamu ketahui tentang Frontend Beginner?");
     setIsLoading(false);
   };
 
   const handleContinueInterview = (text: string) => {
+    let result =
+      "Here is the interview conversation between you and the user. 'Q' represents you, and 'A' represents the user.\n\n";
+
+    for (let i = 0; i < daftarPertanyaan.length; i++) {
+      result += `Q${i + 1}: ${daftarPertanyaan[i]}\nA${i + 1}: ${daftarJawaban[i]}\n\n`;
+    }
+    result += '\n\n';
+
+    console.log('result', result);
     setIsLoading(true);
-    console.log(text);
 
     // Store the current question and answer
-    setDaftarPertanyaan((prevQuestions) => [...prevQuestions, currentPertanyaan]);
-    setDaftarJawaban((prevAnswers) => [...prevAnswers, text]);
+    let newDaftarPertanyaan = [...daftarPertanyaan, currentPertanyaan];
+    let newDaftarJawaban = [...daftarJawaban, text];
+    setDaftarPertanyaan(newDaftarPertanyaan);
+    setDaftarJawaban(newDaftarJawaban);
 
     // Clear the current answer for the next question
     setCurrentAnswer('');
 
-    setMainSessionCount((prevCount) => prevCount + 1);
+    let newMainSessionCount = mainSessionCount + 1;
+    setMainSessionCount(newMainSessionCount);
     const numQuestions = parseInt(userSelection.numQuestions) || 0;
 
     // Simulate API call
-    setTimeout(() => {
+    setTimeout(async () => {
       if (mainSessionCount !== numQuestions) {
-        // API PERTANYAAN SELANJUTNYA
-        const pertanyaanSelanjutnya = 'Siapakah penemu Google?';
+        // CALL API PERTANYAAN SELANJUTNYA
+        const response = await handleQueryRAG(
+          `You are currently interviewing the user and will be asking the question number ${newMainSessionCount} out of ${userSelection.numQuestions}. You can continue from where you or the user left off. Return a query with only one key: 'question', and set the value using ${userSelection.language}`
+        );
 
         setIsLoading(false);
 
-        setCurrentPertanyaan(pertanyaanSelanjutnya);
+        // RESPONSE PERTANYAAN
+        setCurrentPertanyaan(response.data.question);
       } else {
         // API MEMANGGIL REKAP
         const requestBodyAI = 'SOK APA BAE';
 
         // API MENYIMPAN KE DATABASE
         // 1. Menyimpan seluruh daftar pertanyaan dan daftar jawaban
-        const requestBodyQnA = daftarPertanyaan.map((pertanyaan, index) => ({
+        const requestBodyQnA = newDaftarPertanyaan.map((pertanyaan, index) => ({
           id: index + 1, // Replace with actual ID generation logic if needed
           pertanyaan,
-          jawaban: daftarJawaban[index],
+          jawaban: newDaftarJawaban[index],
         }));
 
         // 2. Menyimpan seluruh hasil
