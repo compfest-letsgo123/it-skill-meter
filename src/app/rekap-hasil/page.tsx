@@ -52,7 +52,7 @@ export default function Home() {
           level,
           overview,
           id_user,
-          roles_and_skills (type, nama)  // Join with roles_and_skills table
+          roles_and_skills (type, nama)
         `)
         .eq('id_user', user?.id); // Assuming you want data for the logged-in user
 
@@ -96,7 +96,7 @@ export default function Home() {
           <button
             onClick={() => setFilter("role")}
             className={`${
-              filter === "Role-based" ? "text-black border-b-2 border-black" : "text-gray-500 hover:text-black"
+              filter === "role" ? "text-black border-b-2 border-black" : "text-gray-500 hover:text-black"
             }`}
           >
             Role-based
@@ -104,7 +104,7 @@ export default function Home() {
           <button
             onClick={() => setFilter("skill")}
             className={`${
-              filter === "Skill-based" ? "text-black border-b-2 border-black" : "text-gray-500 hover:text-black"
+              filter === "skill" ? "text-black border-b-2 border-black" : "text-gray-500 hover:text-black"
             }`}
           >
             Skill-based
