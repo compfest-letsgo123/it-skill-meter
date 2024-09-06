@@ -10,11 +10,12 @@ const SelectionForm = ({
   onContinue: any;
   onBack: any;
 }) => {
-  const [language, setLanguage] = useState("Bahasa Inggris");
+  const [language, setLanguage] = useState("Bahasa Indonesia");
   const [numQuestions, setNumQuestions] = useState("3");
 
   const handleSubmit = () => {
     // Call the onContinue function to pass the selected values
+    console.log(language);
     onContinue({ language, numQuestions });
   };
 
@@ -37,8 +38,8 @@ const SelectionForm = ({
           onChange={(e) => setLanguage(e.target.value)}
           className="block w-full p-2 text-black border border-gray-300 rounded-lg"
         >
+          <option>Bahasa Indonesia</option>
           <option>Bahasa Inggris</option>
-          <option disabled>Bahasa Indonesia (COMING SOON)</option>
         </select>
       </div>
 

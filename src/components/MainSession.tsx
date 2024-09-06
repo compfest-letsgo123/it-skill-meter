@@ -1,13 +1,32 @@
 import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { FaPencilAlt, FaSave } from "react-icons/fa";
 
-export default function MainSession({ onContinue }: { onContinue: (text: string) => void; }) {
+export default function MainSession({
+  onContinue,
+  currentPertanyaan,
+  currentMainSessionCount,
+  userSelectionLanguage,
+  currentAnswer,
+  setCurrentAnswer,
+}: {
+  onContinue: (text: string) => void;
+  currentPertanyaan: string;
+  currentMainSessionCount: number;
+  userSelectionLanguage: string;
+  currentAnswer: string;
+  setCurrentAnswer: React.Dispatch<React.SetStateAction<string>>;
+}) {
+
   const [liveText, setLiveText] = useState("");
   const [isRecording, setIsRecording] = useState(false);
+  const [isEditable, setIsEditable] = useState(false);
+  const [hasChanges, setHasChanges] = useState(false);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const router = useRouter();
+  const hasMounted = useRef(false);
 
   const handleBack = () => {
     router.back();
@@ -24,16 +43,39 @@ export default function MainSession({ onContinue }: { onContinue: (text: string)
     if (recognitionRef.current && isRecording) {
       recognitionRef.current.stop();
       setIsRecording(false);
-      // onFinish(liveText); // Pass liveText to parent when recording stops
     }
   };
 
   const handleSubmit = () => {
-    onContinue(liveText);
-  }
+    onContinue(currentAnswer);
+  };
+
+  const handleTextChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setCurrentAnswer(event.target.value);
+    setHasChanges(true);
+  };
+
+  const handleToggleEditable = () => {
+    setIsEditable(!isEditable);
+  };
+
+  const handleSaveChanges = () => {
+    setIsEditable(false);
+    setHasChanges(false);
+  };
+
+  const handleRepeatQuestion = () => {
+    if ("speechSynthesis" in window) {
+      const utterance = new SpeechSynthesisUtterance(currentPertanyaan);
+      if (userSelectionLanguage === "Bahasa Indonesia") utterance.lang = "id-ID"; // Set language to Indonesian
+      else if (userSelectionLanguage === "Bahasa Inggris") utterance.lang = "en-US";
+      window.speechSynthesis.speak(utterance);
+    } else {
+      console.error("SpeechSynthesis is not supported in this browser.");
+    }
+  };
 
   useEffect(() => {
-    // Initialize webcam
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       navigator.mediaDevices
         .getUserMedia({ video: true })
@@ -45,18 +87,18 @@ export default function MainSession({ onContinue }: { onContinue: (text: string)
         .catch((err) => console.error("Error accessing the webcam", err));
     }
 
-    // Initialize SpeechRecognition
-    const SpeechRecognition = window.SpeechRecognition || (window as any).webkitSpeechRecognition;
+    const SpeechRecognition =
+      window.SpeechRecognition || (window as any).webkitSpeechRecognition;
     if (SpeechRecognition) {
       const recognition = new SpeechRecognition();
-      recognition.lang = 'id-ID'; // Set language to Indonesian
-      recognition.interimResults = true; // Enable interim results
-      recognition.continuous = true; // Keep listening
+      recognition.lang = "id-ID";
+      recognition.interimResults = true;
+      recognition.continuous = true;
 
-      let interimTranscript = '';
+      let interimTranscript = "";
 
       recognition.onresult = (event) => {
-        let finalTranscript = '';
+        let finalTranscript = "";
         for (let i = event.resultIndex; i < event.results.length; i++) {
           if (event.results[i].isFinal) {
             finalTranscript += event.results[i][0].transcript;
@@ -64,7 +106,7 @@ export default function MainSession({ onContinue }: { onContinue: (text: string)
             interimTranscript = event.results[i][0].transcript;
           }
         }
-        setLiveText((prevText) => prevText + finalTranscript);
+        setCurrentAnswer((prevText) => prevText + finalTranscript);
       };
 
       recognition.onerror = (event) => {
@@ -83,11 +125,21 @@ export default function MainSession({ onContinue }: { onContinue: (text: string)
     };
   }, []);
 
+  useEffect(() => {
+    if (hasMounted.current) {
+      if (currentPertanyaan) {
+        handleRepeatQuestion();
+      }
+    } else {
+      hasMounted.current = true;
+    }
+  }, [currentPertanyaan]);
+
   return (
     <div className="bg-white rounded-lg shadow-md p-6 max-w-4xl mx-auto">
       {/* Back Button and Question Header */}
       <div className="flex justify-between items-center mb-4 text-black">
-        <div>Pertanyaan 1</div>
+        <p>Pertanyaan {String(currentMainSessionCount)}</p>
         <button
           onClick={handleBack}
           className="border border-gray-400 text-gray-600 px-2 py-1 rounded hover:bg-gray-200"
@@ -124,7 +176,10 @@ export default function MainSession({ onContinue }: { onContinue: (text: string)
             />
           </div>
           <div className="flex justify-center">
-            <button className="px-2 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded text-sm">
+            <button
+              onClick={handleRepeatQuestion}
+              className="px-2 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded text-sm"
+            >
               Ulangi Pertanyaan
             </button>
           </div>
@@ -135,28 +190,47 @@ export default function MainSession({ onContinue }: { onContinue: (text: string)
             autoPlay
             className="w-full h-48 bg-gray-200 mb-2 rounded-xl"
           />
-          <div className="flex justify-center">
-            <button 
+          <div className="flex justify-center mt-4">
+            <button
               onClick={isRecording ? handleStopRecording : handleStartRecording}
-              className="bg-primary-red rounded-md h-8 px-4 flex justify-center items-center text-sm hover:secondary-red"
+              className="bg-primary-red hover:bg-red-600 rounded-md h-8 px-4 flex justify-center items-center text-sm hover:secondary-red"
             >
-              {isRecording ? 'Stop Rekam Jawaban' : 'Mulai Rekam Jawaban'}
+              {isRecording ? "Stop" : "Mulai Rekam Jawaban"}
             </button>
           </div>
         </div>
       </div>
 
-      {/* Live Text Display */}
+      {/* Live Text Display with Edit and Save Buttons */}
       <div className="mb-4">
-        <h3 className="mb-2">Live Text</h3>
-        <div className="border p-2 h-32 text-sm overflow-y-auto text-gray-600">
-          {liveText || "Transcribed text will appear here..."}
+        <div className="flex justify-between mb-2">
+          <h3>Live Text</h3>
+          <button
+            onClick={isEditable ? handleSaveChanges : handleToggleEditable}
+            className="text-gray-600 hover:text-gray-800"
+          >
+            {isEditable ? <FaSave /> : <FaPencilAlt />}
+          </button>
         </div>
+        <textarea
+          value={currentAnswer}
+          onChange={handleTextChange}
+          className="border p-2 h-32 text-sm overflow-y-auto text-gray-600 w-full"
+          disabled={!isEditable} // Disable editing unless 'isEditable' is true
+        />
       </div>
 
       {/* Next Button */}
       <div className="flex justify-end">
-        <button onClick={handleSubmit} className="px-6 py-2 bg-red-500 text-white rounded">
+        <button
+          onClick={handleSubmit}
+          className={`px-6 py-2 text-white rounded ${
+            isEditable || isRecording
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-red-500 hover:bg-red-600"
+          }`}
+          disabled={isEditable || isRecording} // Disable button if there are unsaved changes
+        >
           Lanjut
         </button>
       </div>
