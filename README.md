@@ -1,3 +1,7 @@
+*Repo RAG: https://github.com/compfest-letsgo123/rag-it-skill-meter/*
+
+*Repo Webcrawler: https://github.com/compfest-letsgo123/webcrawler-it-skill-meter/*
+
 # Frontend Website IT Skill Meter
 ![image](https://github.com/user-attachments/assets/37ba0309-e3d7-4103-9a50-11841e650996)
 
