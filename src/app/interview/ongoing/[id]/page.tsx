@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/config/supabaseClient';
 import { roadmapReference } from '@/data/roadmaps';
-import { generatePertanyaanPertama } from '@/utils/StringGenerator';
 import InstructionCard from '@/components/InstructionCard';
 import SelectionForm from '@/components/SelectionForm';
 import DeviceTesting from '@/components/DeviceTesting';
