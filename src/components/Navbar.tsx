@@ -45,7 +45,7 @@ return (
       {/* Logo Section */}
       <a href="/" className="flex items-center">
         <div className="w-8 h-8 rounded-full bg-gradient-to-r from-primary-red to-primary-blue mr-2"></div>
-        <span className="font-semibold text-lg text-black">SkillMeterMu</span>
+        <span className="font-semibold text-lg text-black">IT Skill Meter</span>
       </a>
 
       {/* Menu Items */}

@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import Navbar from "@/components/Navbar";
 import Tabs from "@/components/Tabs";
 import { supabase } from "@/config/supabaseClient"; // Assuming you have this configured

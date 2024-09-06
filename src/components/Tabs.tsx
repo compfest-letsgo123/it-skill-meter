@@ -36,7 +36,7 @@ export default function Tabs({ data }: { data: any }) {
           </div>
         )}
 
-        {activeTab === "Roadmap" && <Roadmap />}
+        {activeTab === "Roadmap" && <Roadmap nama={data.id_roles_and_skills.nama} />}
         {activeTab === "Feedback" && <Feedback />}
       </div>
 

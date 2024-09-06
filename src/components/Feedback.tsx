@@ -1,30 +1,34 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
 export default function Feedback() {
-
-    const data = [
-        {
-            id: 1,
-            question: "What is the capital of France?",
-            feedback: "Good understanding, but remember to include more details.",
-            answer: "The capital of France is Paris.",
-            answerExample: "Example answer: Paris is the capital and most populous city of France."
-        },
-        {
-            id: 2,
-            question: "Explain the process of photosynthesis.",
-            feedback: "Well explained, but include the chemical equation.",
-            answer: "Photosynthesis is the process by which plants make their food.",
-            answerExample: "Example answer: Photosynthesis is the process by which green plants and some other organisms use sunlight to synthesize foods with the help of chlorophyll."
-        }
-        // More data...
-    ];
+  const data = [
+    {
+      id: 1,
+      question: "What is the capital of France?",
+      feedback: "Good understanding, but remember to include more details.",
+      answer: "The capital of France is Paris.",
+      answerExample: "Example answer: Paris is the capital and most populous city of France."
+    },
+    {
+      id: 2,
+      question: "Explain the process of photosynthesis.",
+      feedback: "Well explained, but include the chemical equation.",
+      answer: "Photosynthesis is the process by which plants make their food.",
+      answerExample: "Example answer: Photosynthesis is the process by which green plants and some other organisms use sunlight to synthesize foods with the help of chlorophyll."
+    }
+  ];
 
   // State to manage the selected item and popup visibility
-  const [selectedItem, setSelectedItem] = useState<{ id: number, question: string, feedback: string, answer: string, answerExample: string } | null>(null);
+  const [selectedItem, setSelectedItem] = useState<{
+    id: number;
+    question: string;
+    feedback: string;
+    answer: string;
+    answerExample: string;
+  } | null>(null);
 
   // Function to open the popup with selected data
-  const openPopup = (item: { id: number, question: string, feedback: string, answer: string, answerExample: string }) => {
+  const openPopup = (item: { id: number; question: string; feedback: string; answer: string; answerExample: string }) => {
     setSelectedItem(item);
   };
 
@@ -38,25 +42,17 @@ export default function Feedback() {
       {/* Grid of feedback cards */}
       <div className="h-60 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-8">
         {data.map((item) => (
-          <div
-            key={item.id}
-            className="bg-white p-6 rounded-xl shadow-md relative"
-          >
-            <p className="text-gray-700 mb-2 font-bold">
-              {item.question}
-            </p>
-            <p className="text-gray-500 text-sm mb-6">
-              {item.feedback}
-            </p>
+          <div key={item.id} className="bg-white p-6 rounded-xl shadow-md relative">
+            <p className="text-gray-700 mb-2 font-bold">{item.question}</p>
+            <p className="text-gray-500 text-sm mb-6">{item.feedback}</p>
             <div className="flex justify-center">
-                <button
-                    className="bg-red-500 text-sm py-1 px-2 rounded-full absolute bottom-8"
-                    onClick={() => openPopup(item)}
-                    >
-                    Lihat feedback
-                </button>
+              <button
+                className="bg-red-500 text-sm py-1 px-2 rounded-full absolute bottom-8"
+                onClick={() => openPopup(item)}
+              >
+                Lihat feedback
+              </button>
             </div>
-            
           </div>
         ))}
       </div>
@@ -71,26 +67,18 @@ export default function Feedback() {
             >
               &times;
             </button>
-            <h2 className="text-lg text-black font-bold mb-4">
-              {selectedItem.question}
-            </h2>
+            <h2 className="text-lg text-black font-bold mb-4">{selectedItem.question}</h2>
             <div className="mb-4">
               <h3 className="font-bold text-black text-sm mb-2">Answer:</h3>
-              <p className="text-gray-700">
-                {selectedItem.answer}
-              </p>
+              <p className="text-gray-700">{selectedItem.answer}</p>
             </div>
             <div className="mb-4">
               <h3 className="font-bold text-black text-sm mb-2">Feedback:</h3>
-              <p className="text-gray-700">
-                {selectedItem.feedback}
-              </p>
+              <p className="text-gray-700">{selectedItem.feedback}</p>
             </div>
             <div>
               <h3 className="font-bold text-black text-sm mb-2">Answer Example:</h3>
-              <p className="text-gray-700">
-                {selectedItem.answerExample}
-              </p>
+              <p className="text-gray-700">{selectedItem.answerExample}</p>
             </div>
           </div>
         </div>
