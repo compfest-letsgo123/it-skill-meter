@@ -138,10 +138,10 @@ export default function InterviewPage({ params }: { params: { id: string } }) {
 
     // Simulate API call
     setTimeout(async () => {
-      if (mainSessionCount !== numQuestions) {
+      if (newMainSessionCount !== numQuestions) {
         // CALL API PERTANYAAN SELANJUTNYA
         const response = await handleQueryRAG(
-          `You are currently interviewing the user and will be asking the question number ${newMainSessionCount} out of ${userSelection.numQuestions}. You can continue from where you or the user left off. Return a query with only one key: 'question', and set the value using ${userSelection.language}`
+          `${result}You are currently interviewing the user and will be asking the question number ${newMainSessionCount} out of ${userSelection.numQuestions}. You can continue from where you or the user left off. Return a query with only one key: 'question', and set the value using ${userSelection.language}`
         );
 
         setIsLoading(false);
@@ -150,7 +150,66 @@ export default function InterviewPage({ params }: { params: { id: string } }) {
         setCurrentPertanyaan(response.data.question);
       } else {
         // API MEMANGGIL REKAP
-        const requestBodyAI = 'SOK APA BAE';
+        const response = await handleQueryRAG(
+    `${result}Try providing the level, overview, evaluation, and feedback from the interview result using the following JSON schema:
+
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "level": {
+      "type": "string",
+      "enum": ["Intern", "Junior", "Associate", "Senior", "Lead"]
+    },
+    "overview": {
+      "type": "string"
+    },
+    "evaluation": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "score": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "required": ["score", "title", "description"]
+      }
+    },
+    "feedback": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "skill": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "link": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uri"
+            }
+          }
+        },
+        "required": ["type", "description", "link"]
+      }
+    }
+  },
+  "required": ["level", "overview", "evaluation", "feedback"]
+}`
+);
 
         // API MENYIMPAN KE DATABASE
         // 1. Menyimpan seluruh daftar pertanyaan dan daftar jawaban
