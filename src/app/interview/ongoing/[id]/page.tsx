@@ -89,6 +89,7 @@ export default function InterviewPage({
 
   const handleContinueInterview = (text: string) => {
     setIsLoading(true);
+    console.log(text);
     
     // Store the current question and answer
     setDaftarPertanyaan(prevQuestions => [...prevQuestions, currentPertanyaan]);
