@@ -132,16 +132,16 @@ export default function InterviewPage({ params }: { params: { id: string } }) {
     // Clear the current answer for the next question
     setCurrentAnswer('');
 
-    let newMainSessionCount = mainSessionCount + 1;
-    setMainSessionCount(newMainSessionCount);
+
+    setMainSessionCount((prevCount) => prevCount + 1);
     const numQuestions = parseInt(userSelection.numQuestions) || 0;
 
     // Simulate API call
     setTimeout(async () => {
-      if (newMainSessionCount !== numQuestions) {
+      if (mainSessionCount !== numQuestions) {
         // CALL API PERTANYAAN SELANJUTNYA
         const response = await handleQueryRAG(
-          `${result}You are currently interviewing the user and will be asking the question number ${newMainSessionCount} out of ${userSelection.numQuestions}. You can continue from where you or the user left off. Return a query with only one key: 'question', and set the value using ${userSelection.language}`
+          `${result}You are currently interviewing the user and will be asking the question number ${mainSessionCount} out of ${userSelection.numQuestions}. You can continue from where you or the user left off. Return a query with only one key: 'question', and set the value using ${userSelection.language}`
         );
 
         setIsLoading(false);
@@ -151,7 +151,7 @@ export default function InterviewPage({ params }: { params: { id: string } }) {
       } else {
         // API MEMANGGIL REKAP
         const response = await handleQueryRAG(
-    `${result}Try providing the level, overview, evaluation, and feedback from the interview result using the following JSON schema:
+          `${result}Try providing the level, overview, evaluation, and feedback from the interview result using the following JSON schema:
 
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
@@ -209,65 +209,33 @@ export default function InterviewPage({ params }: { params: { id: string } }) {
   },
   "required": ["level", "overview", "evaluation", "feedback"]
 }`
-);
+        );
+        const { level, overview, evaluation, feedback } = response.data;
 
-        // API MENYIMPAN KE DATABASE
-        // 1. Menyimpan seluruh daftar pertanyaan dan daftar jawaban
-        const requestBodyQnA = newDaftarPertanyaan.map((pertanyaan, index) => ({
-          id: index + 1, // Replace with actual ID generation logic if needed
-          pertanyaan,
-          jawaban: newDaftarJawaban[index],
-        }));
+        const { data: { session } } = await supabase.auth.getSession();
 
-        // 2. Menyimpan seluruh hasil
-        const level = 'Novice';
-        const overview = 'Overview Example';
-        const evaluation = [
-          {
-            score: 78,
-            title: 'Pemahaman dan Pengetahuan Teknis',
-            title_id: 1,
-            deskripsi: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit...',
-          },
-          {
-            score: 78,
-            title: 'Penggunaan Waktu',
-            title_id: 2,
-            deskripsi: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit...',
-          },
-          {
-            score: 78,
-            title: 'Pemecahan Masalah',
-            title_id: 3,
-            deskripsi: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit...',
-          },
-          {
-            score: 78,
-            title: 'Kreativitas dan Inovasi',
-            title_id: 4,
-            deskripsi: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit...',
-          },
-          {
-            score: 78,
-            title: 'Keterampilan Komunikasi',
-            title_id: 5,
-            deskripsi: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit...',
-          },
-          {
-            score: 78,
-            title: 'Kepercayaan Diri dan Sikap',
-            title_id: 6,
-            deskripsi: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit...',
-          },
-        ];
 
-        const requestBodySimpanHasil = { id, level, overview, evaluation };
+        const { data, error }: { data: any, error: any } = await supabase
+          .from('hasil')
+          .insert({
+            created_at: new Date().toISOString(),
+            id_roles_and_skills: parseInt(id),
+            level,
+            overview,
+            evaluation,
+            id_user: session?.user.id, // Replace with actual roadmap ID if available
+            feedback,
+          });
 
-        console.log(requestBodyQnA);
-        console.log(requestBodySimpanHasil);
+        if (error) {
+          console.error('Error inserting data into Supabase:', error);
+        } else {
+          console.log('Data successfully inserted into Supabase:', data);
+          if (data)
+            router.push(`/rekap-hasil/${data[0].id}`);
+        }
 
-        const hasil_id = 3; // This should be replaced with the actual query result
-        // router.push(`/rekap-hasil/${hasil_id}`);
+        setIsLoading(false);
       }
     }, 2000);
   };
