@@ -55,11 +55,10 @@ export default function InterviewPage({ params }: { params: { id: string } }) {
   }, [path, roadmap]);
 
   const handleQueryRAG = async (query: string) => {
-    const BASE_URL = 'http://34.142.176.135';
     const PATH_URL = '/predict';
-    console.log(BASE_URL + PATH_URL);
+    console.log(process.env.NEXT_PUBLIC_RAG_BASE_URL + PATH_URL)
     try {
-      const response = await axios.get(BASE_URL + PATH_URL, {
+      const response = await axios.get(process.env.NEXT_PUBLIC_RAG_BASE_URL + PATH_URL, {
         params: {
           lang: userSelection.language == 'Bahasa Indonesia' ? 'id' : 'en',
           role: path.nama,
