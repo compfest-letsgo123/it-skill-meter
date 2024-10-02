@@ -63,7 +63,7 @@ export default function CardKomponenHasil({ item }: { item: any }) {
 
       {/* Description */}
       <div className="flex-grow overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
-        <p className="text-gray-600 leading-relaxed">{item.deskripsi}</p>
+        <p className="text-gray-600 leading-relaxed">{item.description}</p>
       </div>
     </div>
   );

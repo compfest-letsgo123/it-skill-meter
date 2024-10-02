@@ -141,7 +141,7 @@ export default function InterviewPage({ params }: { params: { id: string } }) {
         // CALL API PERTANYAAN SELANJUTNYA
         console.log(result);
         const response = await handleQueryRAG(
-          `${result}. You can continue from where you or the user left off. Return a query with only one key: 'question', and set the value using ${userSelection.language}`
+          `${result}. You can continue from where you or the user left off. Make sure that you ask a question that never asked before. Return a query with only one key: 'question', and set the value using ${userSelection.language}`
         );
 
         setIsLoading(false);
@@ -150,8 +150,8 @@ export default function InterviewPage({ params }: { params: { id: string } }) {
         setCurrentPertanyaan(response.data.question);
       } else {
         // API MEMANGGIL REKAP
-        const response = await handleQueryRAG(
-          `${result}Try providing the level, overview, evaluation, and feedback from the interview result using the following JSON schema:
+        const response_1 = await handleQueryRAG(
+          `${result}. Give me the level, overview, and feedback from the interview result using the following JSON schema:
 
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
@@ -163,26 +163,6 @@ export default function InterviewPage({ params }: { params: { id: string } }) {
     },
     "overview": {
       "type": "string"
-    },
-    "evaluation": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "score": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 100
-          },
-          "title": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
-          }
-        },
-        "required": ["score", "title", "description"]
-      }
     },
     "feedback": {
       "type": "array",
@@ -207,10 +187,51 @@ export default function InterviewPage({ params }: { params: { id: string } }) {
       }
     }
   },
-  "required": ["level", "overview", "evaluation", "feedback"]
-}`
+  "required": ["level", "overview", "feedback"]
+}.
+
+Make sure that you write a long 'overview'.`
         );
-        const { level, overview, evaluation, feedback } = response.data;
+
+        const response_2 = await handleQueryRAG(
+          `${result}. Give me the evaluation (Pemahaman dan Pengetahuan Teknis, Kreativitas dan Inovasi, Keterampilan Komunikasi, Pemecahan Masalah, Kepercayaan Diri dan Sikap) from the interview result using the following JSON schema:
+
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "evaluation": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "score": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "title": {
+            "type": "string",
+            "enum": ["Pemahaman dan Pengetahuan Teknis", "Kreativitas dan Inovasi", "Keterampilan Komunikasi", "Pemecahan Masalah", "Kepercayaan Diri dan Sikap"]
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "required": ["score", "title", "description"]
+      }
+    }
+  },
+  "required": ["evaluation"]
+}.
+
+Make sure that you write a long 'description'.`
+        );
+        const { level, overview, feedback } = response_1.data;
+        const { evaluation } = response_2.data;
+
+        console.log(response_1.data);
+        console.log(response_2.data);
 
         const {
           data: { session },
