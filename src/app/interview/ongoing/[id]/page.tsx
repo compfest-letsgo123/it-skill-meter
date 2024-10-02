@@ -56,7 +56,7 @@ export default function InterviewPage({ params }: { params: { id: string } }) {
 
   const handleQueryRAG = async (query: string) => {
     const PATH_URL = '/predict';
-    console.log(process.env.NEXT_PUBLIC_RAG_BASE_URL + PATH_URL)
+    console.log(process.env.NEXT_PUBLIC_RAG_BASE_URL + PATH_URL);
     try {
       const response = await axios.get(process.env.NEXT_PUBLIC_RAG_BASE_URL + PATH_URL, {
         params: {
@@ -111,36 +111,37 @@ export default function InterviewPage({ params }: { params: { id: string } }) {
   };
 
   const handleContinueInterview = (text: string) => {
-    let result =
-      "Here is the interview conversation between you and the user. 'Q' represents you, and 'A' represents the user.\n\n";
-
-    for (let i = 0; i < daftarPertanyaan.length; i++) {
-      result += `Q${i + 1}: ${daftarPertanyaan[i]}\nA${i + 1}: ${daftarJawaban[i]}\n\n`;
-    }
-    result += '\n\n';
-
-    console.log('result', result);
-    setIsLoading(true);
-
     // Store the current question and answer
     let newDaftarPertanyaan = [...daftarPertanyaan, currentPertanyaan];
     let newDaftarJawaban = [...daftarJawaban, text];
     setDaftarPertanyaan(newDaftarPertanyaan);
     setDaftarJawaban(newDaftarJawaban);
 
+    let result =
+      "Here is the interview conversation between you and the user. 'Q' represents you, and 'A' represents the user.\n\n";
+
+    for (let i = 0; i < newDaftarPertanyaan.length; i++) {
+      result += `Q${i + 1}: ${newDaftarPertanyaan[i]}\nA${i + 1}: ${newDaftarJawaban[i]}\n\n`;
+    }
+    result += '\n\n';
+
+    console.log('result', result);
+    setIsLoading(true);
+
     // Clear the current answer for the next question
     setCurrentAnswer('');
-
 
     setMainSessionCount((prevCount) => prevCount + 1);
     const numQuestions = parseInt(userSelection.numQuestions) || 0;
 
     // Simulate API call
     setTimeout(async () => {
+      console.log(mainSessionCount, numQuestions);
       if (mainSessionCount !== numQuestions) {
         // CALL API PERTANYAAN SELANJUTNYA
+        console.log(result);
         const response = await handleQueryRAG(
-          `${result}You are currently interviewing the user and will be asking the question number ${mainSessionCount} out of ${userSelection.numQuestions}. You can continue from where you or the user left off. Return a query with only one key: 'question', and set the value using ${userSelection.language}`
+          `${result}. You can continue from where you or the user left off. Return a query with only one key: 'question', and set the value using ${userSelection.language}`
         );
 
         setIsLoading(false);
@@ -211,27 +212,25 @@ export default function InterviewPage({ params }: { params: { id: string } }) {
         );
         const { level, overview, evaluation, feedback } = response.data;
 
-        const { data: { session } } = await supabase.auth.getSession();
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
 
-
-        const { data, error }: { data: any, error: any } = await supabase
-          .from('hasil')
-          .insert({
-            created_at: new Date().toISOString(),
-            id_roles_and_skills: parseInt(id),
-            level,
-            overview,
-            evaluation,
-            id_user: session?.user.id, // Replace with actual roadmap ID if available
-            feedback,
-          });
+        const { data, error }: { data: any; error: any } = await supabase.from('hasil').insert({
+          created_at: new Date().toISOString(),
+          id_roles_and_skills: parseInt(id),
+          level,
+          overview,
+          evaluation,
+          id_user: session?.user.id, // Replace with actual roadmap ID if available
+          feedback,
+        });
 
         if (error) {
           console.error('Error inserting data into Supabase:', error);
         } else {
           console.log('Data successfully inserted into Supabase:', data);
-          if (data)
-            router.push(`/rekap-hasil/${data[0].id}`);
+          if (data) router.push(`/rekap-hasil/${data[0].id}`);
         }
 
         setIsLoading(false);
