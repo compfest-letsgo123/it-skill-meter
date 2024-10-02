@@ -258,6 +258,8 @@ Make sure that you write a long 'description'.`
         }
 
         setIsLoading(false);
+        // RESPONSE PERTANYAAN
+        setCurrentPertanyaan("");
       }
     }, 2000);
   };
