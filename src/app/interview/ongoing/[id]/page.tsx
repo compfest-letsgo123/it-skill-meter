@@ -137,7 +137,7 @@ export default function InterviewPage({ params }: { params: { id: string } }) {
     // Simulate API call
     setTimeout(async () => {
       console.log(mainSessionCount, numQuestions);
-      if (mainSessionCount !== numQuestions) {
+      if (mainSessionCount < numQuestions) {
         // CALL API PERTANYAAN SELANJUTNYA
         console.log(result);
         const response = await handleQueryRAG(
@@ -216,21 +216,24 @@ export default function InterviewPage({ params }: { params: { id: string } }) {
           data: { session },
         } = await supabase.auth.getSession();
 
-        const { data, error }: { data: any; error: any } = await supabase.from('hasil').insert({
-          created_at: new Date().toISOString(),
-          id_roles_and_skills: parseInt(id),
-          level,
-          overview,
-          evaluation,
-          id_user: session?.user.id, // Replace with actual roadmap ID if available
-          feedback,
-        });
+        const { data, error }: { data: any; error: any } = await supabase
+          .from('hasil')
+          .insert({
+            created_at: new Date().toISOString(),
+            id_roles_and_skills: parseInt(id),
+            level,
+            overview,
+            evaluation,
+            id_user: session?.user.id, // Replace with actual roadmap ID if available
+            feedback,
+          })
+          .select();
 
         if (error) {
           console.error('Error inserting data into Supabase:', error);
         } else {
           console.log('Data successfully inserted into Supabase:', data);
-          if (data) router.push(`/rekap-hasil/${data[0].id}`);
+          router.push(`/rekap-hasil/${data[0].id}`);
         }
 
         setIsLoading(false);
