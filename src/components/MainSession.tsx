@@ -24,6 +24,7 @@ export default function MainSession({
   const [isRecording, setIsRecording] = useState(false);
   const [isEditable, setIsEditable] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
+  const [showQuestion, setShowQuestion] = useState(false); // State for showing current question
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
@@ -194,6 +195,10 @@ export default function MainSession({
     }
   }, [currentPertanyaan]);
 
+  const handleToggleQuestion = () => {
+    setShowQuestion((prev) => !prev); // Toggle visibility of the question
+  };
+  
   return (
     <div className='bg-white rounded-lg shadow-md p-6 max-w-4xl mx-auto'>
       {/* Back Button and Question Header */}
@@ -230,13 +235,20 @@ export default function MainSession({
               height={80}
             />
           </div>
-          <div className='flex justify-center'>
+          <div className='flex flex-col justify-center'>
             <button
               onClick={handleRepeatQuestion}
               className='px-2 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded text-sm'
             >
               Ulangi Pertanyaan
             </button>
+          <button
+            onClick={handleToggleQuestion}
+            className='mt-2 px-2 py-1 bg-green-500 hover:bg-green-600 text-white rounded text-sm'
+          >
+            Tampilkan Pertanyaan
+          </button>
+          {showQuestion && <p className='mt-2 text-black'>{currentPertanyaan}</p>} {/* Conditional rendering of the question */}
           </div>
         </div>
         <div>
