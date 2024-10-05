@@ -22,6 +22,7 @@ export default function InterviewPage({ params }: { params: { id: string } }) {
   const [daftarPertanyaan, setDaftarPertanyaan] = useState<Array<string>>([]);
   const [currentAnswer, setCurrentAnswer] = useState('');
   const [daftarJawaban, setDaftarJawaban] = useState<Array<string>>([]);
+  const [sidewaysLookCounter, setSidewaysLookCounter] = useState<number>(0);
   const router = useRouter();
 
   useEffect(() => {
@@ -56,9 +57,9 @@ export default function InterviewPage({ params }: { params: { id: string } }) {
 
   const handleQueryRAG = async (query: string) => {
     const PATH_URL = '/predict';
-    console.log(process.env.NEXT_PUBLIC_RAG_BASE_URL + PATH_URL);
+    console.log(process.env.NEXT_PUBLIC_BACKEND_BASE_URL + PATH_URL);
     try {
-      const response = await axios.get(process.env.NEXT_PUBLIC_RAG_BASE_URL + PATH_URL, {
+      const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_BASE_URL + PATH_URL, {
         params: {
           lang: userSelection.language == 'Bahasa Indonesia' ? 'id' : 'en',
           role: path.nama,
@@ -151,7 +152,7 @@ export default function InterviewPage({ params }: { params: { id: string } }) {
       } else {
         // API MEMANGGIL REKAP
         const response_1 = await handleQueryRAG(
-          `${result}. Give me the level, overview, and feedback from the interview result using the following JSON schema:
+          `${result}. Give me the level and overview from the interview conversation result using the following JSON schema:
 
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
@@ -168,11 +169,11 @@ export default function InterviewPage({ params }: { params: { id: string } }) {
   "required": ["level", "overview"]
 }.
 
-Make sure that you write a long 'overview'.`
+Make sure that you write a long 'overview'. Don't make up anything outside of the interview conversation result.`
         );
 
         const response_2 = await handleQueryRAG(
-          `${result}. Give me the feedback from the interview result using the following JSON schema:
+          `${result}. Give me the feedback from the interview conversation result using the following JSON schema:
 
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
@@ -206,7 +207,7 @@ Make sure that you write a long 'overview'.`
         );
 
         const response_3 = await handleQueryRAG(
-          `${result}. Give me the evaluation of "Pemahaman dan Pengetahuan Teknis" from the interview result using the following JSON schema:
+          `${result}. Give me the evaluation of "Pemahaman dan Pengetahuan Teknis" from the interview conversation result using the following JSON schema:
 
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
@@ -228,11 +229,11 @@ Make sure that you write a long 'overview'.`
   "required": ["score", "title", "description"]
 }.
 
-Make sure that you write a long 'description'.`
+Make sure that you write a long enough 'description'. Don't make up anything outside of the interview conversation result.`
         );
 
         const response_4 = await handleQueryRAG(
-          `${result}. Give me the evaluation of "Kreativitas dan Inovasi" from the interview result using the following JSON schema:
+          `${result}. Give me the evaluation of "Kreativitas dan Inovasi" from the interview conversation result using the following JSON schema:
 
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
@@ -254,11 +255,11 @@ Make sure that you write a long 'description'.`
   "required": ["score", "title", "description"]
 }.
 
-Make sure that you write a long 'description'.`
+Make sure that you write a long enough 'description'. Don't make up anything outside of the interview conversation result.`
         );
 
         const response_5 = await handleQueryRAG(
-          `${result}. Give me the evaluation of "Keterampilan Komunikasi" from the interview result using the following JSON schema:
+          `${result}. Give me the evaluation of "Keterampilan Komunikasi" from the interview conversation result using the following JSON schema:
 
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
@@ -280,11 +281,11 @@ Make sure that you write a long 'description'.`
   "required": ["score", "title", "description"]
 }.
 
-Make sure that you write a long 'description'.`
+Make sure that you write a long enough 'description'. Don't make up anything outside of the interview conversation result.`
         );
 
         const response_6 = await handleQueryRAG(
-          `${result}. Give me the evaluation of "Pemecahan Masalah" from the interview result using the following JSON schema:
+          `${result}. Give me the evaluation of "Pemecahan Masalah" from the interview conversation result using the following JSON schema:
 
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
@@ -306,11 +307,11 @@ Make sure that you write a long 'description'.`
   "required": ["score", "title", "description"]
 }.
 
-Make sure that you write a long 'description'.`
+Make sure that you write a long enough 'description'. Don't make up anything outside of the interview conversation result.`
         );
 
         const response_7 = await handleQueryRAG(
-          `${result}. Give me the evaluation of "Kepercayaan Diri dan Sikap" from the interview result using the following JSON schema:
+          `${result}. Give me the evaluation of "Kepercayaan Diri dan Sikap" from the interview conversation result using the following JSON schema:
 
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
@@ -332,8 +333,32 @@ Make sure that you write a long 'description'.`
   "required": ["score", "title", "description"]
 }.
 
-Make sure that you write a long 'description'.`
+Make sure that you write a long enough 'description'. Note that the user has looked sideways ${sidewaysLookCounter} times. A higher frequency of sideways glances may indicate that the user is not speaking fluently or confidently.`
         );
+
+        console.log(`${result}. Give me the evaluation of "Kepercayaan Diri dan Sikap" from the interview conversation result using the following JSON schema:
+
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "score": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "title": {
+      "type": "string",
+      "const": "Kepercayaan Diri dan Sikap"
+    },
+    "description": {
+      "type": "string"
+    }
+  },
+  "required": ["score", "title", "description"]
+}.
+
+Make sure that you write a long enough 'description'. Note that the user has looked sideways ${sidewaysLookCounter} times. A higher frequency of sideways glances may indicate that the user is not speaking fluently or confidently.`)
 
         const { level, overview } = response_1.data;
         const { feedback } = response_2.data;
@@ -342,7 +367,7 @@ Make sure that you write a long 'description'.`
         const evaluation_3 = response_5.data;
         const evaluation_4 = response_6.data;
         const evaluation_5 = response_7.data;
-        const evaluation = [evaluation_1, evaluation_2, evaluation_3, evaluation_4, evaluation_5]
+        const evaluation = [evaluation_1, evaluation_2, evaluation_3, evaluation_4, evaluation_5];
 
         const {
           data: { session },
@@ -403,6 +428,7 @@ Make sure that you write a long 'description'.`
               userSelectionLanguage={userSelection.language}
               currentAnswer={currentAnswer}
               setCurrentAnswer={setCurrentAnswer}
+              setSidewaysLookCounter={setSidewaysLookCounter}
             />
           )}
         </>
