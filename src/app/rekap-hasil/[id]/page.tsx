@@ -93,7 +93,7 @@ export default function RekapHasilPage({ params }: { params: any }) {
             <h1 className="text-5xl font-bold text-black mb-4 pt-8">
               {data.level}
             </h1>
-            <div className="bg-white h-96 mt-12 rounded-xl shadow-lg mx-8 p-4">
+            <div className="bg-white p-6 mt-12 rounded-xl shadow-lg mx-8 p-4">
               <p className="text-black">{data.overview}</p>
             </div>
           </div>
