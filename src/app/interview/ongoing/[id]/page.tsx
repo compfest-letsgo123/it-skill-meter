@@ -229,7 +229,7 @@ Make sure that you write a long 'overview'. Don't make up anything outside of th
   "required": ["score", "title", "description"]
 }.
 
-Make sure that you write a long enough 'description'. Don't make up anything outside of the interview conversation result.`
+Make sure that you write a long enough 'description' and make sure the score base on answer. Don't make up anything outside of the interview conversation result.`
         );
 
         const response_4 = await handleQueryRAG(
@@ -255,7 +255,7 @@ Make sure that you write a long enough 'description'. Don't make up anything out
   "required": ["score", "title", "description"]
 }.
 
-Make sure that you write a long enough 'description'. Don't make up anything outside of the interview conversation result.`
+Make sure that you write a long enough 'description' and make sure the score base on answer. Don't make up anything outside of the interview conversation result.`
         );
 
         const response_5 = await handleQueryRAG(
@@ -281,7 +281,7 @@ Make sure that you write a long enough 'description'. Don't make up anything out
   "required": ["score", "title", "description"]
 }.
 
-Make sure that you write a long enough 'description'. Don't make up anything outside of the interview conversation result.`
+Make sure that you write a long enough 'description' and make sure the score base on answer. Don't make up anything outside of the interview conversation result.`
         );
 
         const response_6 = await handleQueryRAG(
@@ -307,7 +307,7 @@ Make sure that you write a long enough 'description'. Don't make up anything out
   "required": ["score", "title", "description"]
 }.
 
-Make sure that you write a long enough 'description'. Don't make up anything outside of the interview conversation result.`
+Make sure that you write a long enough 'description' and make sure the score base on answer. Don't make up anything outside of the interview conversation result.`
         );
 
         const response_7 = await handleQueryRAG(
@@ -333,7 +333,7 @@ Make sure that you write a long enough 'description'. Don't make up anything out
   "required": ["score", "title", "description"]
 }.
 
-Make sure that you write a long enough 'description'. Note that the user has looked sideways ${sidewaysLookCounter} times. A higher frequency of sideways glances may indicate that the user is not speaking fluently or confidently.`
+Make sure that you write a long enough 'description' and and make sure the score base on answer and Note that the user has looked sideways ${sidewaysLookCounter} times. A higher frequency of sideways glances may indicate that the user is not speaking fluently or confidently.`
         );
 
         console.log(`${result}. Give me the evaluation of "Kepercayaan Diri dan Sikap" from the interview conversation result using the following JSON schema:
