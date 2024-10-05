@@ -28,7 +28,7 @@ const CardRekapHasil = ({ id, title, type, date, level, overview }: CardRekapHas
   };
 
   return (
-    <div className="bg-white shadow-md rounded-lg p-5 max-w-xl h-72 flex flex-col justify-between items-start">
+    <div className="bg-white shadow-md rounded-lg p-5 max-w-xl min-h-72 flex flex-col justify-between items-start">
       <div>
         <div className="flex flex-row justify-between">
           <p className="text-gray-400 text-sm">
