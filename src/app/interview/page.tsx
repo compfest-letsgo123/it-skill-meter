@@ -1,14 +1,15 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/config/supabaseClient";
 import Navbar from "@/components/Navbar";
+import { CiSearch } from "react-icons/ci";
 
 export default function Home() {
   const [warning, setWarning] = useState<string | null>(null);
   const [roles, setRoles] = useState<any[]>([]);
   const [skills, setSkills] = useState<any[]>([]);
+  const [searchTerm, setSearchTerm] = useState<string>(""); // New state for search input
   const router = useRouter();
 
   useEffect(() => {
@@ -20,12 +21,11 @@ export default function Home() {
       if (error) {
         console.error("Error fetching data:", error);
       } else {
-
         // Initialize arrays to hold categorized data
         const rolesArray: any[] = [];
         const skillsArray: any[] = [];
 
-        // Categorize data based on 'tipe'
+        // Categorize data based on 'type'
         data?.forEach((item) => {
           if (item.type === "role") {
             rolesArray.push(item);
@@ -58,6 +58,14 @@ export default function Home() {
     }
   };
 
+  // Function to filter roles and skills based on search term
+  const filteredRoles = roles.filter((role) =>
+    role.nama.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+  const filteredSkills = skills.filter((skill) =>
+    skill.nama.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className="pb-8 min-h-screen">
       <Navbar />
@@ -72,37 +80,61 @@ export default function Home() {
         </div>
       )}
 
-      {/* Role-based Section */}
+      {/* Centered Search input for filtering roles and skills */}
+      <div className="flex justify-center items-center mb-2">
+  <CiSearch size={24} className="mr-[-35px] mt-[20px] top-1/2 transform -translate-y-1/2 text-gray-500" />
+  <input
+    type="text"
+    name="Search"
+    className="bg-gray-50 border border-gray-300 text-gray-900 rounded-full text-lg hover:bg-gray-100 w-[600px] p-4 pl-10 placeholder-gray-500 focus:ring focus:ring-blue-300 transition-all duration-300"
+    placeholder="Search for roles or skills..."
+    value={searchTerm}
+    onChange={(e) => setSearchTerm(e.target.value)}
+  />
+</div>
+
+
+
       <div className="px-8 lg:px-16">
-        <h2 className="text-2xl font-bold text-black underline mb-4">
-          Role-based
-        </h2>
-        <div className="grid grid-cols-4 gap-4">
-          {roles.map((role) => (
-            <button
-              key={role.id}
-              onClick={() => handleRedirect(role.id)}
-              className="bg-white px-4 py-2 rounded-full text-black shadow hover:bg-gray-100"
-            >
-              {role.nama}
-            </button>
-          ))}
-        </div>
-        {/* Skill-based Section */}
-        <h2 className="text-2xl font-bold text-black underline mb-4 pt-8">
-          Skill-based
-        </h2>
-        <div className="grid grid-cols-4 gap-4">
-          {skills.map((skill) => (
-            <button
-              key={skill.id}
-              onClick={() => handleRedirect(skill.id)}
-              className="bg-white px-4 py-2 rounded-full text-black shadow hover:bg-gray-100"
-            >
-              {skill.nama}
-            </button>
-          ))}
-        </div>
+        {/* Conditionally render Role-based Section if there are matching roles */}
+        {filteredRoles.length > 0 && (
+          <>
+            <h2 className="text-2xl font-bold text-black underline mb-4">
+              Role-based
+            </h2>
+            <div className="grid grid-cols-4 gap-4">
+              {filteredRoles.map((role) => (
+                <button
+                  key={role.id}
+                  onClick={() => handleRedirect(role.id)}
+                  className="bg-white px-4 py-2 rounded-full text-black shadow hover:bg-gray-100"
+                >
+                  {role.nama}
+                </button>
+              ))}
+            </div>
+          </>
+        )}
+
+        {/* Conditionally render Skill-based Section if there are matching skills */}
+        {filteredSkills.length > 0 && (
+          <>
+            <h2 className="text-2xl font-bold text-black underline mb-4 pt-8">
+              Skill-based
+            </h2>
+            <div className="grid grid-cols-4 gap-4">
+              {filteredSkills.map((skill) => (
+                <button
+                  key={skill.id}
+                  onClick={() => handleRedirect(skill.id)}
+                  className="bg-white px-4 py-2 rounded-full text-black shadow hover:bg-gray-100"
+                >
+                  {skill.nama}
+                </button>
+              ))}
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
