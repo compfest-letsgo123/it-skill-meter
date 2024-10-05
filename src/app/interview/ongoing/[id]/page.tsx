@@ -163,7 +163,21 @@ export default function InterviewPage({ params }: { params: { id: string } }) {
     },
     "overview": {
       "type": "string"
-    },
+    }
+  },
+  "required": ["level", "overview"]
+}.
+
+Make sure that you write a long 'overview'.`
+        );
+
+        const response_2 = await handleQueryRAG(
+          `${result}. Give me the feedback from the interview result using the following JSON schema:
+
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
     "feedback": {
       "type": "array",
       "items": {
@@ -187,51 +201,148 @@ export default function InterviewPage({ params }: { params: { id: string } }) {
       }
     }
   },
-  "required": ["level", "overview", "feedback"]
-}.
-
-Make sure that you write a long 'overview'.`
+  "required": ["feedback"]
+}.`
         );
 
-        const response_2 = await handleQueryRAG(
-          `${result}. Give me the evaluation (Pemahaman dan Pengetahuan Teknis, Kreativitas dan Inovasi, Keterampilan Komunikasi, Pemecahan Masalah, Kepercayaan Diri dan Sikap) from the interview result using the following JSON schema:
+        const response_3 = await handleQueryRAG(
+          `${result}. Give me the evaluation of "Pemahaman dan Pengetahuan Teknis" from the interview result using the following JSON schema:
 
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "object",
   "properties": {
-    "evaluation": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "score": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 100
-          },
-          "title": {
-            "type": "string",
-            "enum": ["Pemahaman dan Pengetahuan Teknis", "Kreativitas dan Inovasi", "Keterampilan Komunikasi", "Pemecahan Masalah", "Kepercayaan Diri dan Sikap"]
-          },
-          "description": {
-            "type": "string"
-          }
-        },
-        "required": ["score", "title", "description"]
-      }
+    "score": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "title": {
+      "type": "string",
+      "const": "Pemahaman dan Pengetahuan Teknis"
+    },
+    "description": {
+      "type": "string"
     }
   },
-  "required": ["evaluation"]
+  "required": ["score", "title", "description"]
 }.
 
 Make sure that you write a long 'description'.`
         );
-        const { level, overview, feedback } = response_1.data;
-        const { evaluation } = response_2.data;
 
-        console.log(response_1.data);
-        console.log(response_2.data);
+        const response_4 = await handleQueryRAG(
+          `${result}. Give me the evaluation of "Kreativitas dan Inovasi" from the interview result using the following JSON schema:
+
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "score": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "title": {
+      "type": "string",
+      "const": "Kreativitas dan Inovasi"
+    },
+    "description": {
+      "type": "string"
+    }
+  },
+  "required": ["score", "title", "description"]
+}.
+
+Make sure that you write a long 'description'.`
+        );
+
+        const response_5 = await handleQueryRAG(
+          `${result}. Give me the evaluation of "Keterampilan Komunikasi" from the interview result using the following JSON schema:
+
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "score": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "title": {
+      "type": "string",
+      "const": "Keterampilan Komunikasi"
+    },
+    "description": {
+      "type": "string"
+    }
+  },
+  "required": ["score", "title", "description"]
+}.
+
+Make sure that you write a long 'description'.`
+        );
+
+        const response_6 = await handleQueryRAG(
+          `${result}. Give me the evaluation of "Pemecahan Masalah" from the interview result using the following JSON schema:
+
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "score": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "title": {
+      "type": "string",
+      "const": "Pemecahan Masalah"
+    },
+    "description": {
+      "type": "string"
+    }
+  },
+  "required": ["score", "title", "description"]
+}.
+
+Make sure that you write a long 'description'.`
+        );
+
+        const response_7 = await handleQueryRAG(
+          `${result}. Give me the evaluation of "Kepercayaan Diri dan Sikap" from the interview result using the following JSON schema:
+
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "score": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 100
+    },
+    "title": {
+      "type": "string",
+      "const": "Kepercayaan Diri dan Sikap"
+    },
+    "description": {
+      "type": "string"
+    }
+  },
+  "required": ["score", "title", "description"]
+}.
+
+Make sure that you write a long 'description'.`
+        );
+
+        const { level, overview } = response_1.data;
+        const { feedback } = response_2.data;
+        const evaluation_1 = response_3.data;
+        const evaluation_2 = response_4.data;
+        const evaluation_3 = response_5.data;
+        const evaluation_4 = response_6.data;
+        const evaluation_5 = response_7.data;
+        const evaluation = [evaluation_1, evaluation_2, evaluation_3, evaluation_4, evaluation_5]
 
         const {
           data: { session },
@@ -257,9 +368,9 @@ Make sure that you write a long 'description'.`
           router.push(`/rekap-hasil/${data[0].id}`);
         }
 
-        setIsLoading(false);
         // RESPONSE PERTANYAAN
-        setCurrentPertanyaan("");
+        setCurrentPertanyaan('');
+        setIsLoading(false);
       }
     }, 2000);
   };
