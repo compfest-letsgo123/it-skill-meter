@@ -79,7 +79,6 @@ export default function MainSession({
         if (data.iris_position === 'left' || data.iris_position === 'right') {
           setSidewaysLookCounter((prev) => prev + 1);
         }
-        console.log('iris_position', data.iris_position);
       } else {
         console.error('Failed to send frame to backend');
       }
@@ -268,7 +267,7 @@ export default function MainSession({
             )}
             <button
               onClick={isRecording ? handleStopRecording : handleStartRecording}
-              className='bg-primary-red hover:bg-red-600 rounded-md h-8 px-4 flex justify-center items-center text-sm hover:secondary-red'
+              className='text-white bg-primary-red hover:bg-red-600 rounded-md h-8 px-4 flex justify-center items-center text-sm hover:secondary-red'
             >
               {isRecording ? 'Stop' : 'Mulai Rekam Jawaban'}
             </button>

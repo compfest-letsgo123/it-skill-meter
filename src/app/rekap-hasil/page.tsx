@@ -60,7 +60,6 @@ export default function Home() {
         console.error("Error fetching data:", error);
       } else {
         setHasilData(data);
-        console.log(data);
       }
     };
 

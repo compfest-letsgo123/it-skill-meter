@@ -46,8 +46,8 @@ export default function Home() {
             <span className="font-bold">impianmu</span> dari sini!
           </h1>
           <p className="text-gray-500 text-lg md:text-xl mb-6">
-            Pilih roadmap karir IT ynang sesuai dengan ambisimu, lakukan
-            wawancara interaktif, da dapatkan feedback untuk mengasah kemampuan
+            Pilih roadmap karir IT yang sesuai dengan ambisimu, lakukan
+            wawancara interaktif, dan dapatkan feedback untuk mengasah kemampuan
             IT kamu!
           </p>
           <button

@@ -26,7 +26,6 @@ export default function InterviewDetail({ params }: { params: { id: string } }) 
       if (error) {
         console.error('Error fetching data:', error);
       } else {
-        // console.log("Fetched data:", rolesAndSkills); // Log the fetched data
         setData(rolesAndSkills[0]); // Assuming you want the first matching item
       }
       setLoading(false); // Set loading to false once data is fetched

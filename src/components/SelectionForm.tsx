@@ -15,7 +15,6 @@ const SelectionForm = ({
 
   const handleSubmit = () => {
     // Call the onContinue function to pass the selected values
-    console.log(language);
     onContinue({ language, numQuestions });
   };
 

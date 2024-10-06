@@ -35,7 +35,6 @@ export default function InterviewPage({ params }: { params: { id: string } }) {
       if (error) {
         console.error('Error fetching data:', error);
       } else {
-        // console.log("Fetched data:", rolesAndSkills); // Log the fetched data
         setPath(rolesAndSkills[0]); // Assuming you want the first matching item
       }
     };
@@ -57,7 +56,6 @@ export default function InterviewPage({ params }: { params: { id: string } }) {
 
   const handleQueryRAG = async (query: string) => {
     const PATH_URL = '/predict';
-    console.log(process.env.NEXT_PUBLIC_BACKEND_BASE_URL + PATH_URL);
     try {
       const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_BASE_URL + PATH_URL, {
         params: {
@@ -67,7 +65,6 @@ export default function InterviewPage({ params }: { params: { id: string } }) {
         },
         timeout: 86400000, // 1 day in milliseconds
       });
-      console.log('Response', response);
       return response;
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -126,7 +123,6 @@ export default function InterviewPage({ params }: { params: { id: string } }) {
     }
     result += '\n\n';
 
-    console.log('result', result);
     setIsLoading(true);
 
     // Clear the current answer for the next question
@@ -137,10 +133,8 @@ export default function InterviewPage({ params }: { params: { id: string } }) {
 
     // Simulate API call
     setTimeout(async () => {
-      console.log(mainSessionCount, numQuestions);
       if (mainSessionCount < numQuestions) {
         // CALL API PERTANYAAN SELANJUTNYA
-        console.log(result);
         const response = await handleQueryRAG(
           `${result}. You can continue from where you or the user left off. Make sure that you ask a question that never asked before. Return a query with only one key: 'question', and set the value using ${userSelection.language}`
         );
@@ -152,7 +146,7 @@ export default function InterviewPage({ params }: { params: { id: string } }) {
       } else {
         // API MEMANGGIL REKAP
         const response_1 = await handleQueryRAG(
-          `${result}. Give me the level and overview from the interview conversation result using the following JSON schema:
+          `${result}. Give me the level and overview from the interview result using the following JSON schema:
 
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
@@ -173,7 +167,7 @@ Make sure that you write a long 'overview'. Don't make up anything outside of th
         );
 
         const response_2 = await handleQueryRAG(
-          `${result}. Give me the feedback from the interview conversation result using the following JSON schema:
+          `${result}. Give me the feedback from the interview result using the following JSON schema:
 
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
@@ -336,30 +330,6 @@ Make sure that you write a long enough 'description' and make sure the score bas
 Make sure that you write a long enough 'description' and and make sure the score base on answer and Note that the user has looked sideways ${sidewaysLookCounter} times. A higher frequency of sideways glances may indicate that the user is not speaking fluently or confidently.`
         );
 
-        console.log(`${result}. Give me the evaluation of "Kepercayaan Diri dan Sikap" from the interview conversation result using the following JSON schema:
-
-{
-  "$schema": "http://json-schema.org/draft-07/schema#",
-  "type": "object",
-  "properties": {
-    "score": {
-      "type": "integer",
-      "minimum": 0,
-      "maximum": 100
-    },
-    "title": {
-      "type": "string",
-      "const": "Kepercayaan Diri dan Sikap"
-    },
-    "description": {
-      "type": "string"
-    }
-  },
-  "required": ["score", "title", "description"]
-}.
-
-Make sure that you write a long enough 'description'. Note that the user has looked sideways ${sidewaysLookCounter} times. A higher frequency of sideways glances may indicate that the user is not speaking fluently or confidently.`)
-
         const { level, overview } = response_1.data;
         const { feedback } = response_2.data;
         const evaluation_1 = response_3.data;
@@ -389,7 +359,6 @@ Make sure that you write a long enough 'description'. Note that the user has loo
         if (error) {
           console.error('Error inserting data into Supabase:', error);
         } else {
-          console.log('Data successfully inserted into Supabase:', data);
           router.push(`/rekap-hasil/${data[0].id}`);
         }
 
